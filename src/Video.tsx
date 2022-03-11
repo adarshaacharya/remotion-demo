@@ -2,12 +2,6 @@ import {Composition} from 'remotion';
 import Renegade from './sections/Renegade';
 import {Intro} from './sections/Intro';
 
-/**
-	width and height in pixels.
-	durationInFrames: Length of the sequence component in terms of frames.
-	fps: The amount of frames per second. 
-	duration in video : The duration in frames divided by FPS results in the duration in seconds.
- */
 export const RemotionVideo: React.FC = () => {
 	return (
 		<div>
