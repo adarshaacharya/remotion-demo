@@ -6,8 +6,7 @@ import {
 	useCurrentFrame,
 	useVideoConfig,
 } from 'remotion';
-
-import renegade from '../assets/renegade-mark.svg';
+import renegade from '../images/renegade-mark.svg';
 
 interface RenegadeProps {
 	banner: string;

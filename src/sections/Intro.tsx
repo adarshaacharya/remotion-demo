@@ -1,5 +1,4 @@
 import {useAudioData, visualizeAudio} from '@remotion/media-utils';
-import React from 'react';
 import {
 	AbsoluteFill,
 	Audio,
@@ -10,32 +9,32 @@ import {
 	useCurrentFrame,
 	useVideoConfig,
 } from 'remotion';
-import intro from '../assets/bass.wav';
+import SoundVisualizer from '../components/SoundVisualizer';
+import intro from '../sounds/bass.wav';
 
 import Renegade from './Renegade';
 import * as styles from './styles';
 
 export const Intro = () => {
 	const frame = useCurrentFrame();
-
 	const config = useVideoConfig();
 	const audioData = useAudioData(intro);
 
-	const generateOpacity = (startFrame: number, endFrame: number) => {
-		const opacity = interpolate(frame, [startFrame, endFrame], [0, 1], {
+	const generateInterpolation = (startFrame: number, endFrame: number) => {
+		const val = interpolate(frame, [startFrame, endFrame], [0, 1], {
 			extrapolateRight: 'clamp',
 		});
-
-		return opacity;
+		return val;
 	};
 
 	const scale = spring({
+		frame: frame - 210,
 		fps: config.fps,
 		from: 0,
 		to: 1,
-		frame: frame - 210,
 		config: {
 			stiffness: 300,
+			damping: 10,
 		},
 	});
 
@@ -44,9 +43,9 @@ export const Intro = () => {
 	}
 
 	const visualization = visualizeAudio({
+		audioData,
 		fps: config.fps,
 		frame,
-		audioData,
 		numberOfSamples: 16,
 	}); // [0.22, 0.1, 0.01, 0.01, 0.01, 0.02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -56,7 +55,10 @@ export const Intro = () => {
 			<Series>
 				<Series.Sequence durationInFrames={70}>
 					<AbsoluteFill
-						style={{...styles.flexCenter, opacity: generateOpacity(0, 70)}}
+						style={{
+							...styles.flexCenter,
+							opacity: generateInterpolation(0, 70),
+						}}
 					>
 						Hello Everyone 👋
 					</AbsoluteFill>
@@ -72,7 +74,9 @@ export const Intro = () => {
 									marginTop: 670,
 									height: 200,
 									backgroundColor: '#02FCFA',
-									textShadow: styles.extrude(generateOpacity(70, 140) * 15),
+									textShadow: styles.extrude(
+										generateInterpolation(70, 140) * 15
+									),
 									transform: 'rotate(-4deg)',
 								}}
 							>
@@ -84,7 +88,10 @@ export const Intro = () => {
 
 				<Series.Sequence durationInFrames={70}>
 					<AbsoluteFill
-						style={{...styles.flexCenter, opacity: generateOpacity(140, 210)}}
+						style={{
+							...styles.flexCenter,
+							opacity: generateInterpolation(140, 210),
+						}}
 					>
 						Today we are going to learn about
 					</AbsoluteFill>
@@ -99,7 +106,9 @@ export const Intro = () => {
 						<div
 							style={{
 								transform: `scale(${scale})`,
-								textShadow: styles.extrude(generateOpacity(210, 280) * 15),
+								textShadow: styles.extrude(
+									generateInterpolation(210, 280) * 15
+								),
 							}}
 						>
 							REMOTION
@@ -107,7 +116,7 @@ export const Intro = () => {
 						<p
 							style={{
 								fontSize: '3rem',
-								opacity: generateOpacity(210, 280),
+								opacity: generateInterpolation(210, 280),
 							}}
 						>
 							Generate Video Programmatically in React
@@ -124,26 +133,8 @@ export const Intro = () => {
 					</AbsoluteFill>
 				</Series.Sequence>
 			</Series>
+
 			<SoundVisualizer visualization={visualization} />
 		</AbsoluteFill>
-	);
-};
-
-interface SoundVisualizerProps {
-	visualization: number[];
-}
-const SoundVisualizer: React.FC<SoundVisualizerProps> = ({visualization}) => {
-	return (
-		<>
-			{visualization.map((viz) => (
-				<div
-					style={{
-						width: 1000 * viz,
-						height: 30,
-						backgroundColor: '#ADD8E6',
-					}}
-				/>
-			))}
-		</>
 	);
 };
